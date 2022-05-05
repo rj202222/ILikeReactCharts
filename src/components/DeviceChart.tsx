@@ -4,19 +4,26 @@ import { num } from "../utils/generators";
 
 const data = new Array(3).fill(0).map((_el) => num());
 
-export default function DeviceChart() {
+type DeviceChartProps = {
+  options: {
+    labels: string[];
+    colors: string[];
+  };
+};
+export default function DeviceChart({
+  options: localOptions,
+}: DeviceChartProps) {
   const options: ApexCharts.ApexOptions = {
     legend: {
       show: true,
       position: "bottom",
     },
+    colors: localOptions.colors,
     stroke: { width: 0 },
-    labels: ["Mobile", "Tablet", "Desktop"],
+    labels: localOptions.labels,
     dataLabels: {
       enabled: true,
-      formatter(val: string) {
-        return `${parseInt(val, 10)}%`;
-      },
+      formatter: (val: any) => `${parseInt(val, 10)}%`,
     },
     plotOptions: {
       pie: {
@@ -24,8 +31,8 @@ export default function DeviceChart() {
           labels: {
             show: true,
             value: {
-              formatter(val: string) {
-                return val;
+              formatter(val: any) {
+                return `${val}`;
               },
             },
             total: {
@@ -33,60 +40,22 @@ export default function DeviceChart() {
               fontSize: "1.5rem",
               label: "Total Visits",
               formatter() {
-                return `${data.reduce((acc, curr) => acc + curr, 0)}`;
+                return `${data.reduce((a, b) => a + b, 0)}`;
               },
             },
           },
         },
       },
     },
-    responsive: [
-      {
-        breakpoint: 992,
-        options: {
-          chart: {
-            height: 380,
-          },
-          legend: {
-            position: "bottom",
-          },
-        },
-      },
-      {
-        breakpoint: 576,
-        options: {
-          chart: {
-            height: 320,
-          },
-          plotOptions: {
-            pie: {
-              donut: {
-                labels: {
-                  show: true,
-                  name: {
-                    fontSize: "1.5rem",
-                  },
-                  value: {
-                    fontSize: "1rem",
-                  },
-                  total: {
-                    fontSize: "1.5rem",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    ],
   };
 
   return (
-    <ReactApexcharts
-      options={options}
-      series={data}
-      type="donut"
-      height={500}
-    />
+    <div>
+      <ReactApexcharts
+        options={options}
+        series={data}
+        type="donut"
+        height={500}
+      />
+    </div>
   );
-}
